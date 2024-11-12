@@ -2,12 +2,19 @@ import cv2
 
 # Carrega a imagem
 img = cv2.imread('image.webp')
-print(cv2.data.haarcascades)
-# Carrega os classificadores Haar para rosto e olhos
+
+scale_factor_face = 1.3
+min_neighbors_face = 5
+scale_factor_eye = 1.31
+min_neighbors_eye = 2
+scale_factor_smile = 1.204
+min_neighbors_smile = 30
+
+# Carrega os classificadores Haar para rosto, olhos e sorriso
 detec_face = cv2.CascadeClassifier(
     cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 detec_eye = cv2.CascadeClassifier(
-    cv2.data.haarcascades + 'haarcascade_eye_tree_eyeglasses.xml')
+    cv2.data.haarcascades + 'haarcascade_eye.xml')
 detec_smile = cv2.CascadeClassifier(
     cv2.data.haarcascades + 'haarcascade_smile.xml')
 
@@ -15,7 +22,8 @@ detec_smile = cv2.CascadeClassifier(
 cinza = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Detecta rostos na imagem
-faces = detec_face.detectMultiScale(cinza, scaleFactor=1.3, minNeighbors=5)
+faces = detec_face.detectMultiScale(
+    cinza, scaleFactor=scale_factor_face, minNeighbors=min_neighbors_face)
 
 # Loop para cada rosto detectado
 for (x, y, larg, alt) in faces:
@@ -28,7 +36,7 @@ for (x, y, larg, alt) in faces:
 
     # Detecta olhos dentro da ROI do rosto
     eyes = detec_eye.detectMultiScale(
-        roi_gray, scaleFactor=1.1, minNeighbors=2)
+        roi_gray, scaleFactor=scale_factor_eye, minNeighbors=min_neighbors_eye)
 
     # Desenha retângulos ao redor dos olhos
     for (ex, ey, ew, eh) in eyes:
@@ -36,12 +44,11 @@ for (x, y, larg, alt) in faces:
 
     # Detecta sorrisos dentro da ROI do rosto
     smiles = detec_smile.detectMultiScale(
-        roi_gray, scaleFactor=1.204, minNeighbors=30)
+        roi_gray, scaleFactor=scale_factor_smile, minNeighbors=min_neighbors_smile)
 
     # Desenha retângulos ao redor dos sorrisos
     for (sx, sy, sw, sh) in smiles:
         cv2.rectangle(roi_color, (sx, sy), (sx + sw, sy + sh), (0, 0, 255), 2)
-
 
 # Exibe a imagem com os retângulos
 cv2.imshow("Detecção de Rosto e Olhos", img)
