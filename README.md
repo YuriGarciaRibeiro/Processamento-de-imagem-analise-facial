@@ -32,7 +32,5 @@ python main.py
 - [OpenCV](https://opencv.org/)
 - [Numpy](https://numpy.org/)
 
-## Autores
 
-- [Lucas Siqueira](
  
